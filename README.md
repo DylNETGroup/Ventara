@@ -1,139 +1,213 @@
-# Ventara
+# Ventara — Simple Update Publishing Guide
 
-Official Ventara download and update endpoint.
+This GitHub repository is only used to host **Ventara downloads and updates**.
 
-This public repository intentionally contains **no Ventara application source code**. The newest compiled Ventara version is published on the **Releases** page and is also used by Ventara's built-in updater.
+The Ventara source code stays on the development computer and is **not uploaded here**.
 
-## What the GitHub repository itself should look like
+## What goes in this GitHub repository?
 
-Keep the normal repository extremely small. You do **not** upload the Ventara project, Electron source, `desktop` folder, tests, Node modules, or build tools here.
+Only this README needs to be stored in the normal repository files.
 
 ```text
-DylNETGroup/Ventara/
-├── README.md
-└── PUBLISH-UPDATE.txt
+Ventara/
+└── README.md
 ```
 
-The actual Ventara downloads live under **GitHub Releases**, not as files/folders committed into the repository.
+The compiled Ventara applications are uploaded through **GitHub Releases**, not added to the repository folders.
 
-## Example GitHub layout
+---
 
-For example, while Ventara 1.0.1 is the current version, GitHub would effectively look like this:
+# Publishing a new Ventara update
+
+## 1. Change the Ventara version
+
+Before building a new release, update the Ventara version in the local project.
+
+For example:
 
 ```text
-DylNETGroup/Ventara
+1.0.0 → 1.0.1
+```
+
+The new version must be higher than the version users already have installed.
+
+## 2. Build the update versions
+
+Open the local:
+
+```text
+Ventara Generator
+```
+
+Use the **Update** builder for each operating system being released.
+
+### Windows
+
+Run:
+
+```text
+Windows/Build-Windows-Update.bat
+```
+
+### macOS
+
+Run:
+
+```text
+macOS/Build-macOS-Update.command
+```
+
+### Linux
+
+Run:
+
+```text
+Linux/Build-Linux-Update.sh
+```
+
+Each builder places its finished files into:
+
+```text
+Ventara Generator/Output/
+```
+
+The files intended for GitHub are automatically collected in:
+
+```text
+Ventara Generator/Output/GitHub Upload/
+```
+
+## 3. Check the GitHub Upload folder
+
+After all required platforms have been built, the folder should contain files similar to:
+
+```text
+GitHub Upload/
+├── Ventara-1.0.1-win-x64.exe
+├── Ventara-1.0.1-win-x64.exe.blockmap
+├── latest.yml
 │
-├── README.md
-├── PUBLISH-UPDATE.txt
+├── Ventara-1.0.1-mac-universal.dmg
+├── Ventara-1.0.1-mac-universal.zip
+├── Ventara-1.0.1-mac-universal.zip.blockmap
+├── latest-mac.yml
 │
-└── Releases
-    └── Ventara v1.0.1
-        └── Assets
-            ├── Ventara-1.0.1-win-x64.exe
-            ├── Ventara-1.0.1-win-x64.exe.blockmap
-            ├── Ventara-1.0.1-Windows-Portable.exe
-            ├── latest.yml
-            │
-            ├── Ventara-1.0.1-mac-universal.dmg
-            ├── Ventara-1.0.1-mac-universal.zip
-            ├── Ventara-1.0.1-mac-universal.zip.blockmap
-            ├── latest-mac.yml
-            │
-            ├── Ventara-1.0.1-linux-x64.AppImage
-            ├── Ventara-1.0.1-linux-arm64.AppImage
-            └── latest-linux.yml
+├── Ventara-1.0.1-linux-x64.AppImage
+├── Ventara-1.0.1-linux-arm64.AppImage
+└── latest-linux*.yml
 ```
 
-The exact filenames can vary slightly depending on the current Electron Builder configuration. The important rule is: **upload the generated files exactly as Ventara Generator produced them; do not rename the update manifests or blockmap files.**
+The exact filenames may vary slightly depending on the build.
 
-## Where those files come from
+**Only upload the files inside `GitHub Upload`.**
 
-On your development machine, Ventara Generator keeps the latest compiled output here:
+Do not upload the Ventara source project, `node_modules`, unpacked builds, certificates, or development files.
+
+## 4. Open the GitHub release page
+
+On Windows, the easiest option is to run:
 
 ```text
-Ventara Generator/
-└── Output/
-    ├── Windows/
-    │   └── latest Windows build files
-    ├── macOS/
-    │   └── latest macOS build files
-    ├── Linux/
-    │   └── latest Linux build files
-    │
-    ├── GitHub Update/
-    │   ├── Windows installer/update files
-    │   ├── Windows Portable build
-    │   ├── macOS DMG/ZIP/update files
-    │   ├── Linux AppImages/update files
-    │   ├── latest.yml
-    │   ├── latest-mac.yml
-    │   └── latest-linux*.yml
-    │
-    ├── CURRENT-VERSION.txt
-    └── PUBLISH-LATEST.txt
+Ventara Generator/Open-GitHub-Publish.bat
 ```
 
-For GitHub, the folder you care about is:
+This opens the GitHub release page and the `GitHub Upload` folder.
+
+Otherwise, open the Ventara repository on GitHub and go to:
 
 ```text
-Ventara Generator/Output/GitHub Update/
+Releases → Draft a new release
 ```
 
-**Everything in that folder is uploaded as a direct asset of the current GitHub Release.** Do not upload the `Windows`, `macOS`, or `Linux` output folders themselves to the repository.
+## 5. Create the release
 
-## Latest release only
-
-Only the current Ventara release needs to remain published here. For example:
+For Ventara 1.0.1, use:
 
 ```text
-Installed Ventara: 1.0.0
-GitHub latest:      1.0.1
-Result:             Ventara offers 1.0.1
+Tag:   v1.0.1
+Title: Ventara 1.0.1
 ```
 
-Later, when 1.0.2 is ready:
+The tag version must match the version that was compiled.
+
+## 6. Drag the files into GitHub
+
+Open:
 
 ```text
-Installed Ventara: 1.0.0 or 1.0.1
-GitHub latest:      1.0.2
-Result:             Ventara offers 1.0.2
+Ventara Generator/Output/GitHub Upload/
 ```
 
-You do not need to keep 1.0.0 or 1.0.1 published for this comparison to work.
+Select everything inside the folder and drag it into the **Attach binaries by dropping them here** area on the GitHub release page.
 
-When replacing the current release:
+Wait for every file to finish uploading.
 
-1. Build the new version on the required platforms.
-2. Make sure `Ventara Generator/Output/GitHub Update` contains all of the final update files.
-3. On GitHub, open **Releases** and create a new release such as `v1.0.2`.
-4. Drag all files from `Ventara Generator/Output/GitHub Update` into the release's **Assets** area.
-5. Publish the new release.
-6. Verify that it is visible and the required `latest*.yml` files are present.
-7. Once the new release is working, delete the older release/tag if you only want the latest version visible.
+## 7. Publish the release
 
-Publish the new release **before** deleting the old one so Ventara never temporarily sees an empty update feed.
-
-## What should never be uploaded here
-
-Do not upload the Ventara development project or private build material, including:
+Click:
 
 ```text
-desktop/
-renderer/
-main/
-test/
-node_modules/
-Ventara Generator/
-legacy/
-*.pfx
-*.p12
-*.pem
-*.key
-.env
+Publish release
 ```
 
-Signing certificates, passwords, Apple credentials, and other secrets should also never be placed in this repository or attached to a release.
+The new release is now the version Ventara checks for updates.
 
-## In one sentence
+---
 
-**The repository contains only these small information files; the current GitHub Release contains the compiled Ventara applications and updater files.**
+# What happens after publishing?
+
+Ventara checks the latest published GitHub Release.
+
+For example:
+
+```text
+Installed version: 1.0.0
+Latest GitHub version: 1.0.1
+```
+
+Ventara sees that `1.0.1` is newer and can download the correct update for the user's operating system.
+
+The generated files such as:
+
+```text
+latest.yml
+latest-mac.yml
+latest-linux.yml
+```
+
+contain the version and update information Ventara needs. A separate `currentVersion.json` file is not required.
+
+---
+
+# Keeping only the latest release
+
+It is fine to keep only the newest Ventara release on GitHub.
+
+When replacing 1.0.1 with 1.0.2:
+
+1. Build and upload **1.0.2**.
+2. Publish **1.0.2** first.
+3. Confirm the new release works.
+4. Delete the old **1.0.1** release if it is no longer needed.
+
+Always publish the new release before deleting the old one so Ventara never has a period with no available update feed.
+
+---
+
+# Quick version
+
+For every new Ventara update:
+
+```text
+1. Increase Ventara version
+2. Run the Windows/macOS/Linux Update builders
+3. Open Ventara Generator/Output/GitHub Upload
+4. Create a new GitHub Release
+5. Use tag v<version>
+6. Drag everything from GitHub Upload into the release
+7. Click Publish release
+8. Test updating from the previous Ventara version
+9. Delete the old GitHub Release if desired
+```
+
+That is the complete publishing process.
