@@ -1,0 +1,18 @@
+VENTARA GITHUB UPDATE REPOSITORY
+
+Keep this repository source-free.
+
+To publish a new Ventara version:
+
+1. In your private/local Ventara project, build the production update version.
+2. Open: Ventara Generator/Output/GitHub Update
+3. On GitHub: Releases -> Draft a new release
+4. Tag it with the exact version, e.g. v1.0.1
+5. Upload EVERY file from GitHub Update directly to the release.
+6. Publish the release.
+7. Confirm Ventara can see the new release.
+8. Delete the previous GitHub Release/tag if you only want the latest version visible.
+
+Do not upload Ventara source files.
+Do not rename the generated update assets.
+Do not put latest*.yml or blockmap files inside another ZIP.
