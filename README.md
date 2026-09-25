@@ -69,12 +69,12 @@ Ventara Generator/
     └── Linux/
 ```
 
-Use the update build script for the platform you are building:
+Set the release number once in `Ventara Generator/Version`, then run the single build script for the platform you are building:
 
 ```text
-Ventara Generator/Windows/Build-Windows-Update.bat
-Ventara Generator/macOS/Build-macOS-Update.command
-Ventara Generator/Linux/Build-Linux-Update.sh
+Ventara Generator/Windows/Build-Windows.bat
+Ventara Generator/macOS/Build-macOS.command
+Ventara Generator/Linux/Build-Linux.sh
 ```
 
 Each script creates an unpacked copy of Ventara and places it in the matching folder under `Ventara Generator/Output`.
@@ -101,7 +101,7 @@ On macOS, the complete `Ventara.app` bundle is replaced.
 
 User settings and browser data are stored separately from the application files and are not removed during an update.
 
-There are no version-number folders in the update repository. The current version is stored in `release.json` and in `desktop/package.json`.
+There are no version-number folders in the update repository. Locally, `Ventara Generator/Version` is the version you edit. The generator copies that version into Ventara itself and into `release.json`.
 
 ## Updating Chromium
 
@@ -114,7 +114,7 @@ cd desktop
 npm run engine:update
 ```
 
-After updating, test the browser, bump the version in `desktop/package.json`, rebuild each platform, and upload the new contents of `Ventara Generator/Output` to the repository's `Releases` folder.
+After updating, test the browser, change `Ventara Generator/Version`, rebuild each platform, and upload the new contents of `Ventara Generator/Output` to the repository's `Releases` folder.
 
 ## Project layout
 
