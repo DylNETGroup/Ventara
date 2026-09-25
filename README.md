@@ -1,213 +1,162 @@
-# Ventara — Simple Update Publishing Guide
+# Ventara
 
-This GitHub repository is only used to host **Ventara downloads and updates**.
+Ventara is a desktop web browser built with Electron and Chromium, with a custom interface, tab management, private browsing, bookmarks, history, downloads, themes, backgrounds, profiles, extensions, and built-in update support.
 
-The Ventara source code stays on the development computer and is **not uploaded here**.
+The Electron version is cross-platform and does not require Microsoft Edge WebView2.
 
-## What goes in this GitHub repository?
+## Platforms
 
-Only this README needs to be stored in the normal repository files.
+Ventara can be built for:
 
-```text
-Ventara/
-└── README.md
+- Windows x64
+- macOS
+- Linux x64
+
+Builds are distributed as portable/unpacked applications rather than traditional installers.
+
+## Getting started
+
+### Requirements
+
+- Node.js 22.12 or newer
+- npm
+- Git
+
+Clone the repository, then install the dependencies:
+
+```bash
+cd desktop
+npm ci
 ```
 
-The compiled Ventara applications are uploaded through **GitHub Releases**, not added to the repository folders.
+Run Ventara in development mode:
 
----
-
-# Publishing a new Ventara update
-
-## 1. Change the Ventara version
-
-Before building a new release, update the Ventara version in the local project.
-
-For example:
-
-```text
-1.0.0 → 1.0.1
+```bash
+npm start
 ```
 
-The new version must be higher than the version users already have installed.
+Run the checks and tests:
 
-## 2. Build the update versions
-
-Open the local:
-
-```text
-Ventara Generator
+```bash
+npm run build
+npm test
 ```
 
-Use the **Update** builder for each operating system being released.
+## Building Ventara
 
-### Windows
+You can build directly from the `desktop` folder:
 
-Run:
-
-```text
-Windows/Build-Windows-Update.bat
+```bash
+npm run dist:win
+npm run dist:mac
+npm run dist:linux
 ```
 
-### macOS
+Build each platform on its native operating system.
 
-Run:
+There is also a **Ventara Generator** folder containing simple build launchers for Windows, macOS, and Linux.
 
-```text
-macOS/Build-macOS-Update.command
-```
+### Release builds
 
-### Linux
-
-Run:
+The update builds intended for GitHub are generated into:
 
 ```text
-Linux/Build-Linux-Update.sh
+Ventara Generator/
+└── Output/
+    ├── release.json
+    ├── Windows/
+    ├── Mac/
+    └── Linux/
 ```
 
-Each builder places its finished files into:
+Use the update build script for the platform you are building:
 
 ```text
-Ventara Generator/Output/
+Ventara Generator/Windows/Build-Windows-Update.bat
+Ventara Generator/macOS/Build-macOS-Update.command
+Ventara Generator/Linux/Build-Linux-Update.sh
 ```
 
-The files intended for GitHub are automatically collected in:
+Each script creates an unpacked copy of Ventara and places it in the matching folder under `Ventara Generator/Output`.
+
+## Updates
+
+Ventara uses a whole-folder updater.
+
+The public repository contains a `Releases` directory with the current builds:
 
 ```text
-Ventara Generator/Output/GitHub Upload/
+Releases/
+├── release.json
+├── Windows/
+├── Mac/
+└── Linux/
 ```
 
-## 3. Check the GitHub Upload folder
+Ventara checks `release.json`, selects the build for the current operating system, downloads and verifies the files, then stages the update.
 
-After all required platforms have been built, the folder should contain files similar to:
+When the user chooses **Restart & install**, Ventara closes and replaces the existing application files with the new build in the same installation location.
+
+On macOS, the complete `Ventara.app` bundle is replaced.
+
+User settings and browser data are stored separately from the application files and are not removed during an update.
+
+There are no version-number folders in the update repository. The current version is stored in `release.json` and in `desktop/package.json`.
+
+## Updating Chromium
+
+Ventara uses the Chromium version bundled with Electron. Chromium is therefore updated by updating Electron rather than replacing Chromium separately.
+
+To update the Electron runtime:
+
+```bash
+cd desktop
+npm run engine:update
+```
+
+After updating, test the browser, bump the version in `desktop/package.json`, rebuild each platform, and upload the new contents of `Ventara Generator/Output` to the repository's `Releases` folder.
+
+## Project layout
 
 ```text
-GitHub Upload/
-├── Ventara-1.0.1-win-x64.exe
-├── Ventara-1.0.1-win-x64.exe.blockmap
-├── latest.yml
-│
-├── Ventara-1.0.1-mac-universal.dmg
-├── Ventara-1.0.1-mac-universal.zip
-├── Ventara-1.0.1-mac-universal.zip.blockmap
-├── latest-mac.yml
-│
-├── Ventara-1.0.1-linux-x64.AppImage
-├── Ventara-1.0.1-linux-arm64.AppImage
-└── latest-linux*.yml
+desktop/
+├── main/        Electron main process and browser/update logic
+├── renderer/    Ventara interface
+├── scripts/     Build and release tools
+├── test/        Automated tests
+├── assets/      Icons, backgrounds and other bundled assets
+└── package.json
+
+Ventara Generator/
+├── Windows/
+├── macOS/
+├── Linux/
+└── Output/
+
+legacy/
+└── WinForms/    Original Windows version retained for reference
 ```
 
-The exact filenames may vary slightly depending on the build.
+## Main features
 
-**Only upload the files inside `GitHub Upload`.**
+- Tabs, pinned tabs and tab groups
+- Private tabs and private windows
+- Bookmarks and browsing history
+- Download manager
+- Search engine and homepage settings
+- Light, dark and custom interface themes
+- Custom backgrounds and classic Ventara backgrounds
+- Profile pictures and display names
+- Find in page, zoom, printing and developer tools
+- Extension loading and management
+- Session restore
+- Legacy Ventara data import
+- Automatic and manual update checking
 
-Do not upload the Ventara source project, `node_modules`, unpacked builds, certificates, or development files.
+## Development notes
 
-## 4. Open the GitHub release page
+The Electron application is located in `desktop`. The original WinForms version is kept under `legacy/WinForms` and is not part of the Electron build.
 
-On Windows, the easiest option is to run:
+The production browser uses the update files stored under `Releases` in the GitHub repository. Development builds do not install online updates unless they are built using the update generator scripts.
 
-```text
-Ventara Generator/Open-GitHub-Publish.bat
-```
-
-This opens the GitHub release page and the `GitHub Upload` folder.
-
-Otherwise, open the Ventara repository on GitHub and go to:
-
-```text
-Releases → Draft a new release
-```
-
-## 5. Create the release
-
-For Ventara 1.0.1, use:
-
-```text
-Tag:   v1.0.1
-Title: Ventara 1.0.1
-```
-
-The tag version must match the version that was compiled.
-
-## 6. Drag the files into GitHub
-
-Open:
-
-```text
-Ventara Generator/Output/GitHub Upload/
-```
-
-Select everything inside the folder and drag it into the **Attach binaries by dropping them here** area on the GitHub release page.
-
-Wait for every file to finish uploading.
-
-## 7. Publish the release
-
-Click:
-
-```text
-Publish release
-```
-
-The new release is now the version Ventara checks for updates.
-
----
-
-# What happens after publishing?
-
-Ventara checks the latest published GitHub Release.
-
-For example:
-
-```text
-Installed version: 1.0.0
-Latest GitHub version: 1.0.1
-```
-
-Ventara sees that `1.0.1` is newer and can download the correct update for the user's operating system.
-
-The generated files such as:
-
-```text
-latest.yml
-latest-mac.yml
-latest-linux.yml
-```
-
-contain the version and update information Ventara needs. A separate `currentVersion.json` file is not required.
-
----
-
-# Keeping only the latest release
-
-It is fine to keep only the newest Ventara release on GitHub.
-
-When replacing 1.0.1 with 1.0.2:
-
-1. Build and upload **1.0.2**.
-2. Publish **1.0.2** first.
-3. Confirm the new release works.
-4. Delete the old **1.0.1** release if it is no longer needed.
-
-Always publish the new release before deleting the old one so Ventara never has a period with no available update feed.
-
----
-
-# Quick version
-
-For every new Ventara update:
-
-```text
-1. Increase Ventara version
-2. Run the Windows/macOS/Linux Update builders
-3. Open Ventara Generator/Output/GitHub Upload
-4. Create a new GitHub Release
-5. Use tag v<version>
-6. Drag everything from GitHub Upload into the release
-7. Click Publish release
-8. Test updating from the previous Ventara version
-9. Delete the old GitHub Release if desired
-```
-
-That is the complete publishing process.
+For more detail about creating releases, see [BUILD-AND-RELEASE.md](BUILD-AND-RELEASE.md).
