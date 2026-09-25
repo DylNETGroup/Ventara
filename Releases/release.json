@@ -1,5 +1,13 @@
 {
   "version": "0.1.0",
-  "generatedAt": "1970-01-01T00:00:00.000Z",
-  "platforms": {}
+  "tag": "v0.1.0",
+  "generatedAt": "2026-09-25T12:14:37.689Z",
+  "platforms": {
+    "Windows": {
+      "arch": "x64",
+      "asset": "Windows-Release.zip",
+      "size": 172123400,
+      "sha256": "3aa46ba52e7ba4a944ae1d66154886d553118a3318ba42970eb7be6506d1fbc0"
+    }
+  }
 }
