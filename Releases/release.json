@@ -1,13 +1,13 @@
 {
-  "version": "0.0.9",
-  "tag": "v0.0.9",
-  "generatedAt": "2026-09-25T12:32:59.258Z",
+  "version": "0.1.0",
+  "tag": "v0.1.0",
+  "generatedAt": "2026-09-25T12:50:47.381Z",
   "platforms": {
     "Windows": {
       "arch": "x64",
       "asset": "Windows-Release.zip",
-      "size": 172123576,
-      "sha256": "3a872c84f0ae763183ba6218eb3fa908be1e2207bb591d0bdd2f850bbc4ad97d"
+      "size": 172123963,
+      "sha256": "f02ffd8588d5019e82ca1ef431f664ae5330fe204be2cca1bf483902bdc082f9"
     }
   }
 }
