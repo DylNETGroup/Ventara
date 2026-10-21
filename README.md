@@ -1,188 +1,93 @@
 # Ventara
 
-Ventara is a desktop web browser built with Electron and Chromium, with a custom interface, tab management, private browsing, bookmarks, history, downloads, themes, backgrounds, profiles, extensions, and built-in updates.
+Ventara is a native C++ desktop browser for Windows, with a custom glass interface, an interactive bubble-based Home page and built-in customization tools.
 
-The Electron version is cross-platform and does not require Microsoft Edge WebView2.
+[Download the latest release](https://github.com/DylNETGroup/Ventara/releases/latest) · [All releases](https://github.com/DylNETGroup/Ventara/releases)
 
-## Platforms
+## Features
 
-Ventara can be built for:
+- **Glass interface:** custom window controls, menus and appearance settings.
+- **Bubble Home page:** shortcuts, folders, a pin bar, and free or snapped placement.
+- **Tabs and tab folders:** pinned tabs, grouping, reordering and session restoration.
+- **Bookmarks:** folders, folder colours, favicons and a bookmarks bar.
+- **Personalization:** animated backgrounds, custom images and interface colours.
+- **Browsing tools:** history, downloads, private browsing, privacy settings and extension management.
+- **Pop-out video:** a floating mini-player with playback controls.
+- **Ventara AdShield:** an optional built-in ad and tracker blocker, disabled by default and available in Experimental.
+- **Built-in updates:** checks GitHub Releases for a newer version and installs after confirmation.
 
-- Windows x64
-- macOS
-- Linux x64
+Experimental features may change or behave differently across websites. AdShield depends on the browser runtime's extension support; compatibility can change as that runtime evolves.
 
-Windows builds include both an unpacked portable build and a normal installer. The portable build is also used by Ventara's automatic updater.
+## Requirements
 
-## Getting started
+- Windows 10 or Windows 11, **64-bit x64**. Windows 11 provides the closest intended glass appearance.
+- Microsoft Edge WebView2 Runtime installed.
+- An internet connection for browsing, downloads and update checks.
 
-### Requirements
+The current native release targets Windows. macOS and Linux builds from the discontinued Electron project are not compatible with it.
 
-- Node.js 22.12 or newer
-- npm
-- Git
+## Download and run
 
-Clone the repository, then install the dependencies:
+1. Open the [latest release](https://github.com/DylNETGroup/Ventara/releases/latest).
+2. Under **Assets**, download **`Windows-Release.zip`**. The automatically generated **Source code** archives are not the built application.
+3. Extract the complete ZIP to a normal folder. Do not run Ventara from inside the ZIP.
+4. Open the extracted folder and run **`Ventara.exe`**.
 
-```bash
-cd desktop
-npm ci
-```
-
-Run Ventara in development mode:
-
-```bash
-npm start
-```
-
-Run the checks and tests:
-
-```bash
-npm run build
-npm test
-```
-
-## Ventara Generator
-
-Normal releases are made from the `Ventara Generator` folder.
-
-```text
-Ventara Generator/
-├── Version
-├── Build-Windows.bat
-├── Build-macOS.command
-├── Build-Linux.sh
-└── Output/
-    ├── release.json
-    ├── Windows/
-    │   ├── Portable/
-    │   └── Installer/
-    ├── Mac/
-    └── Linux/
-```
-
-Set the release number once in `Ventara Generator/Version`, for example:
-
-```text
-1.2.0
-```
-
-Then run the build command for the operating system you are building on. The generator applies that version to Ventara automatically before compiling.
-
-### Windows
-
-Run:
-
-```text
-Ventara Generator/Build-Windows.bat
-```
-
-This creates both:
-
-- `Output/Windows/Portable` — the complete unpacked application used for automatic updates.
-- `Output/Windows/Installer` — a normal Windows installer for new/manual installations.
-
-The installer is named `Ventara-Setup-<version>.exe`.
-
-### macOS and Linux
-
-Run `Build-macOS.command` on macOS or `Build-Linux.sh` on Linux. Their update builds are placed directly in `Output/Mac` and `Output/Linux`.
-
-Each generator refreshes only the output it owns. Building Windows does not delete the Mac or Linux builds.
-
-## Publishing updates
-
-Ventara's public update files use this layout in the repository:
-
-```text
-Releases/
-├── release.json
-├── Windows/
-├── Mac/
-└── Linux/
-```
-
-For Windows, copy the **contents** of:
-
-```text
-Ventara Generator/Output/Windows/Portable/
-```
-
-into:
-
-```text
-Releases/Windows/
-```
-
-Do not copy the `Portable` wrapper folder itself. Also copy `Ventara Generator/Output/release.json` to `Releases/release.json`.
-
-For macOS and Linux, copy `Output/Mac` to `Releases/Mac` and `Output/Linux` to `Releases/Linux`.
-
-The Windows installer is not used by the automatic updater. It can be attached to the GitHub Release for people installing Ventara for the first time.
+Keep the complete application contents together, including `WebView2Loader.dll`, `Addons`, `Licenses` and `THIRD-PARTY-NOTICES.txt`. The add-on files are needed even when AdShield is disabled.
 
 ## Updates
 
-Ventara uses a whole-folder updater. It checks `Releases/release.json`, compares the published version with the version built into the app, and selects the files for the current operating system.
+Ventara checks for updates shortly after startup and every six hours while running. You can also open **About → Check for updates**.
 
-When an update is downloaded, every file is verified before installation. After the user chooses to restart and install, Ventara closes and replaces the application files in the existing installation location with the new portable build.
+When a newer release is available, choose **Install update** and confirm. Ventara downloads and verifies the package, saves the session, closes, replaces the application folder and reopens. Session restoration follows your existing preference. The previous application folder is retained as a sibling recovery backup named with `.ventara-old-...`.
 
-On macOS, the complete `Ventara.app` bundle is replaced. User settings and browser data are stored separately from the application files and are not removed during an update.
-
-There are no version-number folders in the update repository and no separate public `Version` file is required. `Ventara Generator/Version` is the version you edit locally; the generator writes the same version into Ventara and `release.json`.
-
-## Updating Chromium
-
-Ventara uses the Chromium version bundled with Electron, so Chromium is updated by updating Electron.
-
-```bash
-cd desktop
-npm run engine:update
-```
-
-After updating Electron, test Ventara, change `Ventara Generator/Version`, rebuild each platform, and publish the new update files.
-
-## Project layout
+Settings and browsing data are stored separately under:
 
 ```text
-desktop/
-├── main/        Electron main process and browser/update logic
-├── renderer/    Ventara interface
-├── scripts/     Build and release tools
-├── test/        Automated tests
-├── assets/      Icons, backgrounds and bundled assets
-└── package.json
-
-Ventara Generator/
-├── Version
-├── Build-Windows.bat
-├── Build-macOS.command
-├── Build-Linux.sh
-└── Output/
-
-legacy/
-└── WinForms/    Original Windows version retained for reference
+%LOCALAPPDATA%\Ventara
 ```
 
-## Main features
+The updater uses the latest published **stable GitHub release**, its numeric version tag and its attached Windows ZIP. It does not use the old repository `Releases/release.json` or `update.json` files. Pre-releases and drafts are not offered by the current updater.
 
-- Tabs, pinned tabs and tab groups
-- Private tabs and private windows
-- Bookmarks and browsing history
-- Download manager
-- Search engine and homepage settings
-- Light, dark and custom interface themes
-- Custom backgrounds and classic Ventara backgrounds
-- Profile pictures and display names
-- Find in page, zoom, printing and developer tools
-- Extension loading and management
-- Session restore
-- Legacy Ventara data import
-- Automatic and manual update checking
+### If an update fails
 
-## Development notes
+- **HTTP 404 while checking:** confirm there is a publicly accessible, published stable release. A draft, pre-release or tag without a published release is not sufficient.
+- **HTTP 404 while downloading:** the selected asset may have been removed or replaced. Restart Ventara, check again and confirm the release asset can be downloaded.
+- **ZIP is incomplete:** the package must contain the complete built application folder, with its loader, `Licenses` folder and notices beside `Ventara.exe`.
+- **Size or SHA-256 verification failed:** restart and check again after the release upload has finished. Do not install a partial or mismatched package.
+- **Installation or restart failed:** retain the existing installation and recovery backup. Check the `update.log` path shown in the error. Update jobs are stored under `%LOCALAPPDATA%\Ventara\NativeUpdates`.
 
-The Electron application is located in `desktop`. The original WinForms version is kept under `legacy/WinForms` and is not part of the Electron build.
+## Build from source
 
-Production builds made through the generator have the stable update channel enabled. Development builds do not install online updates.
+Use the current native source package containing **`Ventara.sln`**. The release asset contains the built application; it may not contain the source project.
 
-For more detail about creating releases, see [BUILD-AND-RELEASE.md](BUILD-AND-RELEASE.md).
+1. Install Visual Studio 2022 with **Desktop development with C++**, the **v143 toolset** and a Windows SDK.
+2. Open `Ventara.sln`.
+3. Select **Release** and **x64**.
+4. Close any running copy of Ventara from that build folder.
+5. Choose **Build → Rebuild Solution** and wait for a successful result.
+6. Run the new `Ventara.exe` from the output `Release` folder.
+
+The native project uses C++20. Keep the bundled dependencies, resources and project settings with the source.
+
+## Publish a new update
+
+1. Before building, update all three version values in `Ventara/core/Version.h`. For example, a **0.1.0** build uses:
+
+   ```cpp
+   #define VENTARA_VERSION "0.1.0"
+   #define VENTARA_VERSION_RESOURCE 0, 1, 0, 0
+   #define VENTARA_VERSION_RESOURCE_STRING "0.1.0.0\0"
+   ```
+
+2. Rebuild **Release/x64** and check the version in About.
+3. Manually ZIP the **complete built Release folder** as **`Windows-Release.zip`**. Zipping the folder itself or its contents both work. Include exactly one `Ventara.exe`; do not include old build backups. `Ventara.pdb` is optional debug information and can be excluded.
+4. Create a GitHub release with the matching numeric tag, for example **`v0.1.0`**, and attach the ZIP. Upload one unambiguous Windows x64 application ZIP.
+5. Leave **Set as a pre-release** unticked, mark the intended release **Latest**, and publish after the upload finishes.
+6. Test the update from a separate, older native build.
+
+**The release tag determines the update version, not the ZIP filename or release title.** The published version must be newer than the installed version: `0.1.0` updates `0.0.9`, but does not update `1.0.0`. Keep the ZIP filename the same across releases if desired. No separate update manifest is required.
+
+## Third-party components
+
+Ventara includes third-party components with their own licence terms. Ventara AdShield is powered by the bundled uBlock Origin filtering engine. Attribution and licence information are included in `THIRD-PARTY-NOTICES.txt`, the `Licenses` folder and the bundled component files. Keep these notices with redistributed builds.
